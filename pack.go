@@ -17,16 +17,17 @@ func main() {
 	var credentials string = "root:@/bb"
 	//database := db.Connect(credentials)
 	
-	insert := make([]string, 2)
-	insert[0] = "0"
-	insert[1] = "name"
+	//insert := make([]string, 2)
 	
-	queryInsert := fmt.Sprintf("INSERT INTO %s VALUES( ?, ?, ?)", "types")
+	//insert[0] = "0"
+	//insert[1] = "olol"
 	
-	err := db.Insert(credentials, queryInsert, insert)
-	if (err != nil) {
-		fmt.Printf("%s", err.Error())
-	}
+	//queryInsert := fmt.Sprintf("INSERT INTO %s VALUES( ?, ?, ?)", "types")
+	
+	//err := db.Insert(credentials, queryInsert, insert)
+	//if (err != nil) {
+	//	fmt.Printf("%s", err.Error())
+	//}
 	
 	result, err := db.QueryRow(credentials, "select * from types");
 	if (err != nil) {

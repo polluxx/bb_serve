@@ -2,7 +2,7 @@ package db
 
 import (
     "database/sql"
-    //"fmt"
+    "fmt"
     "log"
     _ "github.com/go-sql-driver/mysql"
 )
@@ -25,12 +25,6 @@ func Connect(credentials string) *sql.DB {
 	return database
 }
 
-type Type struct {
-	Id		null
-	Name	string
-	Own 	string
-}
-
 func Insert(credents string, query string, insert []string) error{
 	database, err := sql.Open("mysql", credents)
 	
@@ -42,14 +36,12 @@ func Insert(credents string, query string, insert []string) error{
 	
 	// Prepare statement for inserting data
     stmtIns, err := database.Prepare(query)
-    if err != null {
+    if err != nil {
 		return err
     }
     defer stmtIns.Close() // Close the statement when we leave main() / the program terminates	
 	
-	typed := Type{nil, insert[0], insert[1]}
-	
-	_, err = stmtIns.Exec(&typed)
+	_, err = stmtIns.Exec(nil, insert[0], insert[1])
 	if (err != nil) {
 		return err
 	}
@@ -57,8 +49,8 @@ func Insert(credents string, query string, insert []string) error{
 	return err
 }
 
-func QueryRow(credents string, query string) ([]string, error) {	
-	var result []string
+func QueryRow(credents string, query string) (map[int][]string, error) {	
+	var result map[int][]string
 	var err error
 	
 	database, err := sql.Open("mysql", credents)
@@ -82,22 +74,36 @@ func QueryRow(credents string, query string) ([]string, error) {
 	}
 	
 	values := make([]sql.RawBytes, len(columns))
+	scanArgs := make([]interface{}, len(values))
+    for i := range values {
+        scanArgs[i] = &values[i]
+    }
+	
+	fmt.Printf("%v", values)
 	// Query data
-    
+    var index int = 0
+	result = make(map[int][]string)
+	
 	for stmtOut.Next() {
-		err = stmtOut.Scan(&values)
+		
+		err = stmtOut.Scan(scanArgs...)
 		if err != nil {
 			log.Fatal(err)
 			return result, err
 		}
 		
+		resultItem := make([]string, len(values))
+		
 		for i, column := range values {
 			if (column == nil) {
-				result[i] = "NULL"
+				resultItem[i] = "NULL"
 			} else {
-				result[i] = string(column)
+				resultItem[i] = string(column)
 			}
 		}
+		
+		result[index] = resultItem
+		index++
 	}
 	defer stmtOut.Close()
 	return result, err
