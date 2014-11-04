@@ -2,7 +2,7 @@ package db
 
 import (
     "database/sql"
-    "fmt"
+    //"fmt"
     "log"
     _ "github.com/go-sql-driver/mysql"
 )
@@ -79,7 +79,7 @@ func QueryRow(credents string, query string) (map[int][]string, error) {
         scanArgs[i] = &values[i]
     }
 	
-	fmt.Printf("%v", values)
+	//fmt.Printf("%v", values)
 	// Query data
     var index int = 0
 	result = make(map[int][]string)
