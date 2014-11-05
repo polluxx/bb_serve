@@ -7,7 +7,7 @@ import (
 	"time"
 	"encoding/json"
 	"log"
-	//"os"
+	"flag"
 	"regexp"
 )
 
@@ -18,20 +18,24 @@ type Datatype struct {
 	path	string
 }
 
-var Credentials string = "root:gtnhjdbx@/bb"
+var (
+	Credentials string = "root:gtnhjdbx@/bb"
+	//httpAddr = flag.String("http", ":8080", "Listen address")
+)
 
 func main() {
     	http.HandleFunc("/select", mainHandler(selectHandler))
     	http.HandleFunc("/insert", mainHandler(insertHandler))
-
+	
+	flag.Parse()
 	s := &http.Server{
-		Addr:           ":8090",
+		Addr:           ":8080",
 		//Handler:        Handle,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	
+
 	log.Fatal(s.ListenAndServe())
 }
 
